@@ -80,29 +80,6 @@ Beispiel:  "Ha ll o 5"
 <p>
 Soll liefern 4
 */
-
-int count(char* input) {
-	int n = 0;
-	int alphanumericCharSeen = 0;
-	while(*input != '\0'){
-		if (*input != ' ') {
-			alphanumericCharSeen = 1;
-		}
-		if (*input == ' '){
-			skipWhitespace(input, &input);
-			if (alphanumericCharSeen == 1) {
-				n++;
-				alphanumericCharSeen = 0;
-			}
-		}
-		input++;
-		if (*input == '\0') {
-			n++;
-		}
-	}
-  return n; // Muss durch Ihre Loesung ersetzt werden
-}
- 
  /**
   *Ueberspringen von Leerzeichen.
   */
@@ -113,6 +90,26 @@ void skipWhitespace(char* input, char** output){
 	 *output = input;
 	// return input;
  }
+ 
+ void alphanumericChar(char* input, char**output){
+ 	while (*input != '\0' && *input != ' '){
+ 		input++;
+ 	}
+ 	*output = input;
+ }
+ 
+int count(char* input) {
+	int n = 0;
+	while(*input != '\0'){
+		skipWhitespace(input,&input);
+		if (*input != ' '){
+			n++;
+			alphanumericChar(input,&input);
+		}
+	}
+  return n; // Muss durch Ihre Loesung ersetzt werden
+}
+ 
  
 /**
    @brief Aufgabe2d: Aufsammeln von Woertern. Erweiterung von Aufgabe2c.
@@ -131,9 +128,8 @@ geliefert.
 */
 
 int breakIntoWords(char* line, int maxwords, char* words[]) {
-	int n = 0;
-	int i = 0;
-	int size = 0;
+	int n;
+	int i;
 
 	if (maxwords < count(line)) {
 		n = maxwords;
@@ -141,18 +137,16 @@ int breakIntoWords(char* line, int maxwords, char* words[]) {
 		n = count(line);
 	}
 	
-	while (i < n) {
-		if(*line == ' ') {
-			skipWhitespace(line, &line);
+	while (i < n ) {
+		if (*line ==' '){
+			skipWhitespace(line,&line);
 		} else {
-			memmove(&words[i],&line,sizeof(line));
-			printf("%s \n",line);
+			words[i] = line;
+			alphanumericChar(line,&line);
 			i++;
-			if (i == 0) {
-				words[i] = line;
-				i++;
-			}
-			line++;
+		}
+		if (*line == '\0'){
+			break;
 		}
 	}
   return n; // Ihre Loesung
@@ -163,9 +157,9 @@ int main() {
   // Ihre Testroutinen
 
 	char* input = "ada::monyet";
-	char line[] = "     I have homeworks     ";
+	char line[] = " I  have   homeworks ";
 	int i = 0;
-	int nwords = 0;
+	int nwords;
 	char* words[10];
 	
 	printf("Before: %s \n", input);
@@ -173,6 +167,8 @@ int main() {
 	printf("After: %s \n", input);
 	
 	printf("count: %d \n", count(line));
+	
+//	printf("%s\n",strtok(line,' '));
 	
 	nwords = breakIntoWords(line, 10, words);
 	for(i = 0; i < nwords; i++){

@@ -96,5 +96,5 @@ int main() {
   zahl = switchLowHighByte(zahl);
   printf("Nach dem Tauschen von High Byte und Low Byte: %x \n", zahl);
 
-
+  
 }
