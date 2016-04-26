@@ -4,6 +4,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 // Falls notwendig erweitern Sie die Liste der includes
 
 /**
@@ -38,17 +39,15 @@ Anfang der laengsten Endung ohne :: ist.
  */
 
 char* extract(char* input) {
-	int len = 0;
-	while (*input != '\0') {
-		if (*input == ':' && *(input+1) == ':' ) {
-			len = 0;
+	int pos = 0;
+	char* suffix = input;
+	while (input[pos] != '\0') {
+		if (input[pos] == ':' && input[pos+1] == ':' ) {
+			suffix = &input[pos+2];
 		}
-		else if (*input == ':' && *(input + 1) != ':') {
-			len++;
-		}
-		input++;
+		pos++;
 	}
-	return (input-len);
+	return suffix;
 
 }
 
@@ -63,7 +62,7 @@ Wieso reicht ein pointer nicht aus?
 */
 
 void extract2(char* input, char** output) {
-  // Ihre Loesung
+  *output = extract(input);
 
 }
 
@@ -83,11 +82,38 @@ Soll liefern 4
 */
 
 int count(char* input) {
-
-  return 1; // Muss durch Ihre Loesung ersetzt werden
+	int n = 0;
+	int alphanumericCharSeen = 0;
+	while(*input != '\0'){
+		if (*input != ' ') {
+			alphanumericCharSeen = 1;
+		}
+		if (*input == ' '){
+			skipWhitespace(input, &input);
+			if (alphanumericCharSeen == 1) {
+				n++;
+				alphanumericCharSeen = 0;
+			}
+		}
+		input++;
+		if (*input == '\0') {
+			n++;
+		}
+	}
+  return n; // Muss durch Ihre Loesung ersetzt werden
 }
-
-
+ 
+ /**
+  *Ueberspringen von Leerzeichen.
+  */
+void skipWhitespace(char* input, char** output){
+	 while(*input == ' ') {
+		input++;
+	 }
+	 *output = input;
+	// return input;
+ }
+ 
 /**
    @brief Aufgabe2d: Aufsammeln von Woertern. Erweiterung von Aufgabe2c.
    @param [in] char* line
@@ -104,9 +130,32 @@ geliefert.
 
 */
 
-int breakIntoWords(char *line, int maxwords, char *words[]) {
+int breakIntoWords(char* line, int maxwords, char* words[]) {
+	int n = 0;
+	int i = 0;
+	int size = 0;
 
-  return 1; // Ihre Loesung
+	if (maxwords < count(line)) {
+		n = maxwords;
+	} else {
+		n = count(line);
+	}
+	
+	while (i < n) {
+		if(*line == ' ') {
+			skipWhitespace(line, &line);
+		} else {
+			memmove(&words[i],&line,sizeof(line));
+			printf("%s \n",line);
+			i++;
+			if (i == 0) {
+				words[i] = line;
+				i++;
+			}
+			line++;
+		}
+	}
+  return n; // Ihre Loesung
 }
 
 
@@ -114,11 +163,22 @@ int main() {
   // Ihre Testroutinen
 
 	char* input = "ada::monyet";
-
+	char line[] = "     I have homeworks     ";
+	int i = 0;
+	int nwords = 0;
+	char* words[10];
+	
 	printf("Before: %s \n", input);
 	input = extract(input);
 	printf("After: %s \n", input);
-
+	
+	printf("count: %d \n", count(line));
+	
+	nwords = breakIntoWords(line, 10, words);
+	for(i = 0; i < nwords; i++){
+		printf("%s\n", words[i]);
+	}
+	
   /* Beispieltest fuer Aufgabe2d
 char line[] = "this is a test";
 	int i;
