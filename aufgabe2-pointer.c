@@ -91,18 +91,31 @@ void skipWhitespace(char* input, char** output){
 	// return input;
  }
  
- void alphanumericChar(char* input, char**output){
+ int alphanumericChar(char* input, char**output){
+	 int n = 0;
  	while (*input != '\0' && *input != ' '){
  		input++;
+		n++;
  	}
  	*output = input;
+	return n;
  }
+
+ //int wordSize(char* input){
+	// int n;
+	// while (*input != ' ' && *input != '\0'){
+	//	 input++;
+	//	 n++;
+	// }
+	// return n;
+ //}
  
 int count(char* input) {
 	int n = 0;
 	while(*input != '\0'){
+		printf("%d\n", n);
 		skipWhitespace(input,&input);
-		if (*input != ' '){
+		if (*input != ' ' && *input != '\0'){
 			n++;
 			alphanumericChar(input,&input);
 		}
@@ -129,7 +142,7 @@ geliefert.
 
 int breakIntoWords(char* line, int maxwords, char* words[]) {
 	int n;
-	int i;
+	int i = 0;
 
 	if (maxwords < count(line)) {
 		n = maxwords;
@@ -141,8 +154,11 @@ int breakIntoWords(char* line, int maxwords, char* words[]) {
 		if (*line ==' '){
 			skipWhitespace(line,&line);
 		} else {
-			words[i] = line;
-			alphanumericChar(line,&line);
+			char* beginningOfWord = line;
+			int size = alphanumericChar(line,&line);
+			words[i] = (char*)malloc(sizeof(char) * (size + 1));
+			memcpy(words[i], beginningOfWord, sizeof(char)*size);
+			words[i][size] = '\0';
 			i++;
 		}
 		if (*line == '\0'){
