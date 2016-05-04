@@ -18,7 +18,7 @@ Z.B. aus der Zahl 0x4020 wird die Zahl 0x2040.
 */
 
 short int switchLowHighByte(short int i) {
-	return (i << 8 | (unsigned)i >> 8);
+	return ((i << 8) | ((unsigned)i >> 8));
 }
 
 
@@ -67,15 +67,15 @@ verpackt wurden.
 
 void deserialize(short int data, Status* s, Numbers* n) {
 	*s = data & 0x00FF;
-	*n = switchLowHighByte(data & 0xFF00);
+	*n = (unsigned)(data & 0xFF00) >> 8;
 }
 
 
-enum TestEnum {
+typedef enum{
   OK,
   FAIL
-};
-typedef enum TestEnum Test;
+}Test;
+
 
 Test testLowHigh(short int i) {
   Test t;
@@ -87,14 +87,44 @@ Test testLowHigh(short int i) {
   return t;
 }
 
+
+Test testSD(Status s, Numbers n) {
+	Test t;
+	short int data;
+	Status s2;
+	Numbers n2;
+	// Test execution
+	serialize(s, n, &data);
+	deserialize(data, &s2, &n2);
+	
+	if (s2 == s && n2 == n) {
+		t = OK;
+	}
+	else {
+		t = FAIL;
+	}
+	return t;
+}
+
 int main() {
   // Ihre Testroutinen
 
   short int zahl = 0x2040;
+  short int zahl2 = 0x0001;
+  short int zahl3 = 0x1234;
 
   printf("%x \n", zahl);
   zahl = switchLowHighByte(zahl);
   printf("Nach dem Tauschen von High Byte und Low Byte: %x \n", zahl);
-
   
+  printf("%d\n", testLowHigh(zahl));
+  printf("%d\n", testLowHigh(zahl2));
+  printf("%d\n", testLowHigh(zahl3));
+
+  printf("%d\n", testSD(Stop,One));
+  printf("%d\n", testSD(Start, Fifteen));
+  printf("%d\n", testSD(Finish, Last));
+  printf("%d\n", testSD(Fail, Last));
+
+
 }
